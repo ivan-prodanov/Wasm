@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+
+	<Target Name="CopyCilStrip" AfterTargets="Build">
+		<ItemGroup>
+			<MonoCilFiles Include="$(MSBuildThisFileDirectory)mono-cil-strip.*" />
+		</ItemGroup>
+		
+		<Copy SourceFiles="@(MonoCilFiles)" DestinationFolder="$(MSBuildThisFileDirectory)../Wasm.Sdk.Mono/tools" SkipUnchangedFiles="true" />
+	</Target>
+	
+</Project>

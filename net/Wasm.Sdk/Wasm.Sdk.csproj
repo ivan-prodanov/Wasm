@@ -1,0 +1,66 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+	
+	<PropertyGroup>
+		<TargetFramework>netstandard2.1</TargetFramework>
+		<DefineConstants>NET_CORE</DefineConstants>
+		<NoWarn>1701;1702;1705;649;NU5128;NU5100</NoWarn>
+		<NuspecFile>$(MSBuildProjectName).nuspec</NuspecFile>
+	</PropertyGroup>
+	
+	<ItemGroup>
+	  <PackageReference Include="Local" Version="1.0.0" PrivateAssets="All" />
+	</ItemGroup>
+	
+	<ItemGroup>
+	  <Folder Include="lib\" />
+	  <Folder Include="generators\" />
+	</ItemGroup>
+
+	<PropertyGroup>
+		<_MonoDir>$(MSBuildThisFileDirectory)../Wasm.Sdk.Mono/</_MonoDir>
+		<AssemblyName>Wasm.Sdk.NuGet</AssemblyName>
+		<RootNamespace>Wasm.Sdk.NuGet</RootNamespace>
+	</PropertyGroup>
+
+	<UsingTask AssemblyFile="$(_MonoDir)tasks/Wasm.Sdk.Mono.Tasks.dll" TaskName="Wasm.Sdk.Mono.Tasks.WasmRuntimeJsonTask" />
+	<Target Name="CreateWasmPackage" BeforeTargets="Build">
+		<PropertyGroup>
+			<DebugBuild>false</DebugBuild>
+			<DebugBuild Condition="'$(Configuration)' == 'Debug'">true</DebugBuild>
+			<_PackageDir>$(OutDir)package</_PackageDir>
+		</PropertyGroup>
+
+		<ItemGroup>
+			<_IcuFiles Include="$(_MonoDir)/runtimes/browser-wasm/native/icudt.dat" />
+			<_IcuFiles Include="$(_MonoDir)/runtimes/browser-wasm/native/icudt_CJK.dat" />
+			<_IcuFiles Include="$(_MonoDir)/runtimes/browser-wasm/native/icudt_EFIGS.dat" />
+			<_IcuFiles Include="$(_MonoDir)/runtimes/browser-wasm/native/icudt_no_CJK.dat" />
+			<_WasmFile Include="$(_MonoDir)/runtimes/browser-wasm/native/dotnet.wasm" />
+			<_JsFile Include="$(_MonoDir)/runtimes/browser-wasm/native/dotnet.js" />
+			<_TimeZoneFile Include="$(_MonoDir)/runtimes/browser-wasm/native/dotnet.timezones.blat" />
+		</ItemGroup>
+
+		<GetFileHash Files="@(_IcuFiles)" Algorithm="SHA256" HashEncoding="base64">
+			<Output TaskParameter="Items" ItemName="_IcuFilesWithHash" />
+		</GetFileHash>
+
+		<GetFileHash Files="@(_WasmFile)" Algorithm="SHA256" HashEncoding="base64">
+			<Output TaskParameter="Items" ItemName="_WasmFileWithHash" />
+		</GetFileHash>
+
+		<GetFileHash Files="@(_JsFile)" Algorithm="SHA256" HashEncoding="base64">
+			<Output TaskParameter="Items" ItemName="_JsFileWithHash" />
+		</GetFileHash>
+
+		<GetFileHash Files="@(_TimeZoneFile)" Algorithm="SHA256" HashEncoding="base64">
+			<Output TaskParameter="Items" ItemName="_TimeZoneFileWithHash" />
+		</GetFileHash>
+
+		<WasmRuntimeJsonTask IcuFiles="@(_IcuFilesWithHash)" WasmFile="@(_WasmFileWithHash)" JsFile="@(_JsFileWithHash)" TimeZoneFile="@(_TimeZoneFileWithHash)" DebugBuild="$(DebugBuild)" OutputPath="$(_PackageDir)" LoadAllICUData="true" />
+
+		<Copy SourceFiles="@(_IcuFiles)" DestinationFiles="@(_IcuFiles->'$(_PackageDir)\%(RecursiveDir)%(Filename)%(Extension)')" />
+		<Copy SourceFiles="@(_WasmFile)" DestinationFiles="@(_WasmFile->'$(_PackageDir)\%(RecursiveDir)%(Filename)%(Extension)')" />
+		<Copy SourceFiles="@(_JsFile)" DestinationFiles="@(_JsFile->'$(_PackageDir)\%(RecursiveDir)%(Filename)%(Extension)')" />
+		<Copy SourceFiles="@(_TimeZoneFile)" DestinationFiles="@(_TimeZoneFile->'$(_PackageDir)\%(RecursiveDir)%(Filename)%(Extension)')" />
+	</Target>
+</Project>

@@ -1,0 +1,25 @@
+<Project Sdk="Microsoft.NET.Sdk">
+	<PropertyGroup>
+		<TargetFramework>net462</TargetFramework>
+		<OutputType>Exe</OutputType>
+		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+		<AssemblyName>packager</AssemblyName>
+	</PropertyGroup>
+	<ItemGroup>
+		<!-- Enable cross targeting, in case net462 is not installed on the current machine -->
+		<PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.0" PrivateAssets="All" />
+	</ItemGroup>
+	<ItemGroup>
+	  <Reference Include="Mono.Cecil">
+	    <HintPath>..\Wasm.Sdk.Mono\tools\Mono.Cecil.dll</HintPath>
+	  </Reference>
+	</ItemGroup>
+	
+	<Target Name="CopyPackagerFile" AfterTargets="Build">
+		<ItemGroup>
+			<PackagerFiles Include="$(OutDir)\packager*.*" />
+		</ItemGroup>
+		<Message Text="FFF @(PackagerFiles)" Importance="high" />
+		<Copy SourceFiles="@(PackagerFiles)" DestinationFolder="$(MSBuildThisFileDirectory)../Wasm.Sdk.Mono/tools" SkipUnchangedFiles="true" />
+	</Target>
+</Project>

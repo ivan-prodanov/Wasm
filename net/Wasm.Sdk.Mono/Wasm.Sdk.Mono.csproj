@@ -1,0 +1,17 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>netstandard2.0</TargetFramework>
+		<NuspecFile>$(MSBuildProjectName).nuspec</NuspecFile>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<Folder Include="tasks\" />
+		<Folder Include="runtimes\browser-wasm\native\include\wasm\" />
+		<Folder Include="runtimes\browser-wasm\native\src\" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Local" Version="1.0.0" />
+	</ItemGroup>
+</Project>

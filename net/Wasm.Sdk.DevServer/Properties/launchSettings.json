@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "WasmSharp.DevServer": {
+      "commandName": "Project",
+      "commandLineArgs": "serve --applicationpath \"C:\\Users\\Ivan\\Source\\Repos\\MonacoEditorBlazorExp\\MonetaEditorExperiment\\bin\\Debug\\net5.0\\MonetaEditorExperiment.dll\""
+    }
+  }
+}

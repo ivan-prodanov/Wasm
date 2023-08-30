@@ -1,0 +1,7 @@
+<Project>
+	<PropertyGroup>
+		<_WasmSharpServerLib>$(MSBuildThisFileDirectory)../tools/wasmSdk-devServer.dll</_WasmSharpServerLib>
+		<RunCommand>dotnet</RunCommand>
+		<RunArguments>&quot;$(_WasmSharpServerLib)&quot; serve --applicationpath &quot;$(TargetPath)&quot; --redirect &quot;$(Redirect)&quot; --fallbackpath &quot;$(FallbackPath)&quot;</RunArguments>
+	</PropertyGroup>
+</Project>

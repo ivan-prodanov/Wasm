@@ -1,0 +1,11 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>net5.0</TargetFramework>
+		<AssemblyName>Wasm.Sdk</AssemblyName>
+		<RootNamespace>Wasm.Sdk</RootNamespace>
+
+		<OutDir>$(MSBuildThisFileDirectory)../Wasm.Sdk/lib</OutDir>
+	</PropertyGroup>
+
+</Project>

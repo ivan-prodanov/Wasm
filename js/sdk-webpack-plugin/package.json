@@ -1,0 +1,33 @@
+{
+  "name": "@0x33.io/wasm-sdk-webpack-plugin",
+  "version": "0.0.4",
+  "author": "Ivan Prodanov",
+  "description": "Plugin that allows consumption of the wasm-sdk and packages produced using it.",
+  "main": "dist/cjs.js",
+  "license": "MIT",
+  "scripts": {
+    "preclean": "yarn install --mutex network",
+    "build": "cross-env NODE_ENV=production babel src -d dist --copy-files",
+    "test": "jest",
+    "packme": "npm pack",
+    "packme:dry": "npm pack --dry-run",
+    "publishme": "yarn build && npm publish"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.12.10",
+    "@babel/core": "^7.12.10",
+    "@babel/plugin-proposal-class-properties": "^7.13.0",
+    "@babel/preset-env": "^7.12.10",
+    "cross-env": "^7.0.2",
+    "rimraf": "^2.7.1",
+    "webpack": "^5.10.0"
+  },
+  "dependencies": {
+    "copy-webpack-plugin": "6.4.0",
+    "glob": "^7.1.6",
+    "lodash": "^4.17.20"
+  },
+  "files": [
+    "dist"
+  ]
+}

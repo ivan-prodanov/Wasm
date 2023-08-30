@@ -1,0 +1,29 @@
+<!--
+***********************************************************************************************
+Microsoft.NET.Sdk.BlazorWebAssembly.props
+
+WARNING:  DO NOT MODIFY this file unless you are knowledgeable about MSBuild and have
+          created a backup copy.  Incorrect changes to this file will make it
+          impossible to load or build your projects from the command-line or the IDE.
+
+Copyright (c) .NET Foundation. All rights reserved.
+***********************************************************************************************
+-->
+<Project ToolsVersion="14.0" TreatAsLocalProperty="RuntimeIdentifier">
+	<!--<Import Sdk="Microsoft.NET.Sdk.Web" Project="Sdk.props" />-->
+	<!--<Import Sdk="Microsoft.NET.Sdk.Web.ProjectSystem" Project="Sdk.props" />-->
+	<!--<Import Sdk="Microsoft.NET.Sdk.Publish" Project="Sdk.props" />-->
+	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
+
+	<ItemGroup>
+		<Reference Include="Wasm.Sdk">
+			<HintPath>$(MSBuildThisFileDirectory)../lib/net5.0/Wasm.Sdk.dll</HintPath>
+		</Reference>
+	</ItemGroup>
+
+	<ItemGroup>
+		<Reference Include="System.Private.Runtime.InteropServices.JavaScript">
+			<HintPath>$(PkgWasm_Sdk_Mono)/runtimes/browser-wasm/lib/net5.0/System.Private.Runtime.InteropServices.JavaScript.dll</HintPath>
+		</Reference>
+	</ItemGroup>
+</Project>

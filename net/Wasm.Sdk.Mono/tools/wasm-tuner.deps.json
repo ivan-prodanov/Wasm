@@ -1,0 +1,71 @@
+{
+  "runtimeTarget": {
+    "name": ".NETCoreApp,Version=v5.0",
+    "signature": ""
+  },
+  "compilationOptions": {},
+  "targets": {
+    ".NETCoreApp,Version=v5.0": {
+      "wasm-tuner/1.0.0": {
+        "dependencies": {
+          "System.Json": "4.7.1",
+          "System.Reflection.MetadataLoadContext": "5.0.0",
+          "Mono.Cecil": "0.11.3.0"
+        },
+        "runtime": {
+          "wasm-tuner.dll": {}
+        }
+      },
+      "System.Json/4.7.1": {
+        "runtime": {
+          "lib/netstandard2.0/System.Json.dll": {
+            "assemblyVersion": "2.0.8.0",
+            "fileVersion": "4.700.20.21406"
+          }
+        }
+      },
+      "System.Reflection.MetadataLoadContext/5.0.0": {
+        "runtime": {
+          "lib/netcoreapp3.0/System.Reflection.MetadataLoadContext.dll": {
+            "assemblyVersion": "5.0.0.0",
+            "fileVersion": "5.0.20.51904"
+          }
+        }
+      },
+      "Mono.Cecil/0.11.3.0": {
+        "runtime": {
+          "Mono.Cecil.dll": {
+            "assemblyVersion": "0.11.3.0",
+            "fileVersion": "0.11.3.0"
+          }
+        }
+      }
+    }
+  },
+  "libraries": {
+    "wasm-tuner/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "System.Json/4.7.1": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-XymImdgljgVEkd9trFSKWlNJac1Hr+L9lwFLQSUUQfFMkm88AHI6DINAMhpoiUWQIPLIqEjR702eydUb4Qb3Ng==",
+      "path": "system.json/4.7.1",
+      "hashPath": "system.json.4.7.1.nupkg.sha512"
+    },
+    "System.Reflection.MetadataLoadContext/5.0.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-ax7UkfSHcIXp+RiOHiiYrilv6KVZ67CbI7t5WSligDL6iHe1wSBk3WvUG49JOofDd2KHhY8OQqhoERdZz/8o6A==",
+      "path": "system.reflection.metadataloadcontext/5.0.0",
+      "hashPath": "system.reflection.metadataloadcontext.5.0.0.nupkg.sha512"
+    },
+    "Mono.Cecil/0.11.3.0": {
+      "type": "reference",
+      "serviceable": false,
+      "sha512": ""
+    }
+  }
+}

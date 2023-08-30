@@ -1,0 +1,17 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+	<PropertyGroup>
+		<TargetFramework>net5.0</TargetFramework>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\BrowserDebugProxy\BrowserDebugProxy.csproj" />
+	</ItemGroup>
+	
+	<Target Name="CopyFilesAfterBuild" AfterTargets="Build">
+		<ItemGroup>
+			<_CopyItems Include="$(TargetDir)\*.*" />
+		</ItemGroup>
+		<Copy SourceFiles="@(_CopyItems)" DestinationFolder="$(MSBuildThisFileDirectory)..\Wasm.Sdk.DevServer\tools\DebugProxy" />
+	</Target>
+</Project>

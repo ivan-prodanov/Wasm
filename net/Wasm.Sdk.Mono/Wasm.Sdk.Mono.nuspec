@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2012/06/nuspec.xsd">
+	<metadata>
+		<id>Wasm.Sdk.Mono</id>
+		<version>1.0.0</version>
+		<description>Wasm SDK for easy usage of C# code from the existing web infrastructure.</description>
+		<authors>0x33</authors>
+		<dependencies>
+			<group targetFramework=".NET5.0" />
+		</dependencies>
+	</metadata>
+
+	<files>
+		$CommonFileElements$
+		<file src="data\**" target="data" />
+		<file src="runtimes\**" target="runtimes" />
+		<file src="tools\**" target="tools" />
+	</files>
+</package>

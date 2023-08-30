@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2012/06/nuspec.xsd">
+	<metadata>
+		<id>Wasm.Sdk</id>
+		<version>1.0.0</version>
+		<description>Wasm SDK for C#</description>
+		<authors>0x33</authors>
+		<dependencies>
+			<group targetFramework=".NETStandard2.0">
+				<dependency id="Scriban" version="3.0.6" exclude="Build,Analyzers" />
+				<dependency id="System.Text.Json" version="5.0.1" exclude="Build,Analyzers" />
+				<dependency id="System.Text.Encodings.Web" version="5.0.0" exclude="Build,Analyzers" />
+			</group>
+		</dependencies>
+	</metadata>
+
+	<files>
+		$CommonFileElements$
+		<file src="Sdk\*" target="Sdk" />
+		<file src="build\**" target="build" />
+		<file src="jsBuild\**" target="jsBuild" />
+		<file src="targets\**" target="targets" />
+		<file src="tasks\**" target="tasks" />
+		<file src="generators\**" target="analyzers\dotnet\cs" />
+		<file src="lib\Wasm.Sdk.dll" target="lib\net5.0\Wasm.Sdk.dll" />
+		<file src="_._" target="lib\net5.0\_._" />
+	</files>
+</package>

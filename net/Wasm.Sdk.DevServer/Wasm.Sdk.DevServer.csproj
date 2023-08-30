@@ -1,0 +1,26 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<OutputType>Exe</OutputType>
+		<TargetFramework>net5.0</TargetFramework>
+		<AssemblyName>wasmSdk-devServer</AssemblyName>
+		<NuspecFile>$(MSBuildProjectName).nuspec</NuspecFile>
+	</PropertyGroup>
+	<ItemGroup>
+		<FrameworkReference Include="Microsoft.AspNetCore.App" />
+	</ItemGroup>
+	<ItemGroup>
+	  <Folder Include="tools\" />
+	</ItemGroup>
+	<ItemGroup>
+	  <PackageReference Include="Local" Version="1.0.0" />
+	  <PackageReference Include="Microsoft.Extensions.CommandLineUtils" Version="1.1.1" />
+	</ItemGroup>
+
+	<Target Name="CopyFilesAfterBuild" AfterTargets="Build">
+		<ItemGroup>
+			<_CopyItems Include="$(TargetDir)\*.*" />
+		</ItemGroup>
+		<Copy SourceFiles="@(_CopyItems)" DestinationFolder="$(MSBuildThisFileDirectory)\tools" />
+	</Target>
+</Project>

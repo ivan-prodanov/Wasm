@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2012/06/nuspec.xsd">
+	<metadata>
+		<id>Wasm.Sdk.Analyzer</id>
+		<version>1.0.0</version>
+		<description>Wasm SDK Source generator</description>
+		<authors>0x33</authors>
+	</metadata>
+
+	<files>
+		$CommonFileElements$
+		<file src="build\**" target="build" />
+		<file src="$outputPath$Wasm.Sdk.dll" target="analyzers\dotnet\cs" />
+		<file src="$outputPath$Wasm.Sdk.Analyzer.dll" target="analyzers\dotnet\cs" />
+		<file src="$outputPath$Wasm.Sdk.Analyzer.Proxy.dll" target="analyzers\dotnet\cs" />
+		<file src="$pkgScriban$\lib\netstandard2.0\*.*" target="analyzers\dotnet\cs" />
+	</files>
+</package>

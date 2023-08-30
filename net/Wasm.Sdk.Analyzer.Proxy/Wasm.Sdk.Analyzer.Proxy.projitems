@@ -1,0 +1,43 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <MSBuildAllProjects Condition="'$(MSBuildVersion)' == '' Or '$(MSBuildVersion)' &lt; '16.0'">$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+    <HasSharedItems>true</HasSharedItems>
+    <SharedGUID>cd5628ff-7c03-45e7-bc64-670443a0237c</SharedGUID>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration">
+    <Import_RootNamespace>Wasm.Sdk.Analyzer.Proxy</Import_RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)Properties\Resources.Designer.cs">
+      <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)ProxyModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)StringExtensions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)TypeScriptInterface.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)TypeScriptProperty.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)WasmClass.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)WasmConstructor.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)WasmImport.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)WasmMethod.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)WasmMethodBase.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)WasmParameter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)WasmType.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="$(MSBuildThisFileDirectory)Properties\Resources.resx">
+      <SubType>Designer</SubType>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <Generator>ResXFileCodeGenerator</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Include="$(MSBuildThisFileDirectory)Templates\CSharpProxyTemplate.scriban" />
+    <EmbeddedResource Include="$(MSBuildThisFileDirectory)Templates\TypeScriptIndexTemplate.scriban" />
+    <EmbeddedResource Include="$(MSBuildThisFileDirectory)Templates\TypeScriptInterfaceTemplate.scriban" />
+    <EmbeddedResource Include="$(MSBuildThisFileDirectory)Templates\TypeScriptProxyTemplate.scriban" />
+    <EmbeddedResource Include="$(MSBuildThisFileDirectory)Templates\TypeScriptProxyWorkerProxyTemplate.scriban" />
+    <EmbeddedResource Include="$(MSBuildThisFileDirectory)Templates\TypeScriptProxyWorkerTemplate.scriban" />
+    <EmbeddedResource Include="$(MSBuildThisFileDirectory)Templates\wasmShared.ts" />
+  </ItemGroup>
+</Project>

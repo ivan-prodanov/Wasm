@@ -1,0 +1,29 @@
+<Project Sdk="Microsoft.NET.Sdk">
+	<PropertyGroup>
+		<TargetFramework>net5.0</TargetFramework>
+		<LangVersion>9.0</LangVersion>
+		<AssemblyName>wasm-tuner</AssemblyName>
+		<OutputType>Exe</OutputType>
+		<!--<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>-->
+	</PropertyGroup>
+
+	<ItemGroup>
+		<!-- Enable cross targeting, in case net462 is not installed on the current machine -->
+		<!--<PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.0" PrivateAssets="All" />-->
+		<PackageReference Include="System.Json" Version="4.7.1" />
+		<PackageReference Include="System.Reflection.MetadataLoadContext" Version="5.0.0" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Reference Include="Mono.Cecil">
+			<HintPath>..\Wasm.Sdk.Mono\tools\Mono.Cecil.dll</HintPath>
+		</Reference>
+	</ItemGroup>
+
+	<Target Name="CopyFilesAfterBuild" AfterTargets="Build">
+		<ItemGroup>
+			<_CopyItems Include="$(TargetDir)\wasm-tuner.*" />
+		</ItemGroup>
+		<Copy SourceFiles="@(_CopyItems)" DestinationFolder="$(MSBuildThisFileDirectory)../Wasm.Sdk.Mono/tools" />
+	</Target>
+</Project>

@@ -1,0 +1,270 @@
+<Project ToolsVersion="14.0">
+	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
+
+	<ItemGroup>
+		<ProjectCapability Include="DotNetCoreWeb" />
+	</ItemGroup>
+
+	<!--<ItemGroup>
+		<Analyzer Include="$(MSBuildThisFileDirectory)..\generators\Wasm.Sdk.Analyzer.dll" IsImplicitlyDefined="true" />
+	</ItemGroup>-->
+  
+	<ItemGroup>
+		<CompilerVisibleProperty Include="SourceGenerator_EnableDebug" />
+		<CompilerVisibleProperty Include="IntermediateOutputPath" />
+		<CompilerVisibleProperty Include="ProjectDir" />
+    <CompilerVisibleProperty Include="DefaultAssemblyDocumentationWhitelist" />
+    <CompilerVisibleProperty Include="AssemblyDocumentationWhitelist" />
+    <CompilerVisibleProperty Include="WasmPackageOutputPath" />
+    <CompilerVisibleProperty Include="GenerateDocumentationFile" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<!-- Configuration for the platform compatibility analyzer. See https://github.com/dotnet/designs/blob/master/accepted/2020/platform-exclusion/platform-exclusion.md#build-configuration-for-platforms -->
+		<SupportedPlatform Remove="@(SupportedPlatform)" />
+		<SupportedPlatform Include="browser" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Wasm.Sdk.Mono" Version="1.0.0" PrivateAssets="All" GeneratePathProperty="true" IncludeAssets="Build" />
+		<PackageReference Include="Wasm.Sdk.DevServer" Version="1.0.0" PrivateAssets="All" GeneratePathProperty="true" IncludeAssets="Build" />
+		<PackageReference Include="Wasm.Sdk" Version="1.0.0" /> <!-- Reference to itself to enable Source Generators -->
+	</ItemGroup>
+
+	<PropertyGroup>
+		<TargetFramework>net5.0</TargetFramework>
+		<OutputType>Library</OutputType>
+		<!-- Enable doc generation by default -->
+		<GenerateDocumentationFile>true</GenerateDocumentationFile>
+	</PropertyGroup>
+	
+	<PropertyGroup>
+		<!-- TODO! -->
+		<!--<_packageBinaryPath>$(MSBuildThisFileDirectory)../tools/Uno.Wasm.Bootstrap.v0.dll</_packageBinaryPath>
+
+		<WasmShellIndexHtmlPath Condition="!Exists('$(_packageBinaryPath)')">$(MSBuildThisFileDirectory)../Templates/index.html</WasmShellIndexHtmlPath>
+		<WasmShellIndexHtmlPath Condition="Exists('$(_packageBinaryPath)') and '$(WasmShellIndexHtmlPath)'==''">$(MSBuildThisFileDirectory)../tools/templates/index.html</WasmShellIndexHtmlPath>-->
+
+		<WasmShellContentExtensionsToExclude Condition="'$(WasmShellContentExtensionsToExclude)' == ''">.a;.bc;.o</WasmShellContentExtensionsToExclude>
+
+		<MonoWasmRuntimeConfiguration Condition="'$(MonoWasmRuntimeConfiguration)'==''">release</MonoWasmRuntimeConfiguration>
+		<MonoRuntimeDebuggerEnabled Condition="'$(MonoRuntimeDebuggerEnabled)'==''">false</MonoRuntimeDebuggerEnabled>
+		<WasmShellILLinkerEnabled Condition="'$(WasmShellILLinkerEnabled)'==''">false</WasmShellILLinkerEnabled>
+		<WasmShellGenerateCompressedFiles Condition="'$(WasmShellGenerateCompressedFiles)'=='' and '$(Configuration)'=='Debug'">false</WasmShellGenerateCompressedFiles>
+		<WasmShellGenerateCompressedFiles Condition="'$(WasmShellGenerateCompressedFiles)'==''">true</WasmShellGenerateCompressedFiles>
+		<WasmShellBrotliCompressionQuality Condition="'$(WasmShellBrotliCompressionQuality)'==''">7</WasmShellBrotliCompressionQuality>
+    <WasmPackageOutputPath Condition="'$(WasmPackageOutputPath)'==''">$(OutputPath)\js</WasmPackageOutputPath>
+
+		<!--
+			Set this variable to use custom debugger binaries instead of the files found 
+			in the active mono-wasm folder.
+		-->
+
+		<!--
+			<MonoRuntimeCustomDebuggerPath>$(MSBuildThisFileDirectory)CustomDebuggerProxy</MonoRuntimeCustomDebuggerPath>
+		-->
+
+		<!-- Uncomment to enable custom linker path -->
+		<!-- 
+			<MonoRuntimeCustomLinkerPath>$(MSBuildThisFileDirectory)</MonoRuntimeCustomLinkerPath>
+		-->
+
+		<!-- 
+			Force all applicable references to be present in the ReferenceCopyLocalPaths property.
+			Otherwise, the ReferencePath property only contains reference assemblies if those are available.
+        -->
+		<CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+
+		<!-- 
+			When using IISExpress with a standalone app, there's no point restarting IISExpress
+			after build. It slows things unnecessarily and breaks in-flight HTTP requests.
+		-->
+		<NoRestartServerOnBuild>true</NoRestartServerOnBuild>
+
+		<!-- Disable unwanted parts of the default publish process -->
+		<CopyBuildOutputToPublishDirectory>false</CopyBuildOutputToPublishDirectory>
+		<CopyOutputSymbolsToPublishDirectory>false</CopyOutputSymbolsToPublishDirectory>
+		<PreserveCompilationContext>false</PreserveCompilationContext>
+		<RazorCompileOnPublish>false</RazorCompileOnPublish>
+		<GenerateDependencyFile>false</GenerateDependencyFile>
+		<IsWebConfigTransformDisabled>true</IsWebConfigTransformDisabled>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<UpToDateCheckInput Include="@(LinkerDescriptors)" />
+		<UpToDateCheckInput Include="@(LinkerDescriptor)" />
+	</ItemGroup>
+
+	<UsingTask AssemblyFile="$(MSBuildThisFileDirectory)../tasks/Wasm.Sdk.Tasks.dll" TaskName="Wasm.Sdk.Tasks.PackageTask" />
+	<UsingTask AssemblyFile="$(MSBuildThisFileDirectory)../tasks/Wasm.Sdk.Tasks.dll" TaskName="Wasm.Sdk.Tasks.WasmPackageJsonTask" />
+	<UsingTask AssemblyFile="$(MSBuildThisFileDirectory)../tasks/Wasm.Sdk.Tasks.dll" TaskName="Wasm.Sdk.Tasks.NpmPackageJsonTask" />
+	<UsingTask AssemblyFile="$(MSBuildThisFileDirectory)../tasks/Wasm.Sdk.Tasks.dll" TaskName="Wasm.Sdk.Tasks.TrimTask" />
+  <UsingTask AssemblyFile="$(MSBuildThisFileDirectory)../tasks/Wasm.Sdk.Tasks.dll" TaskName="Wasm.Sdk.Tasks.PublishDocumentationTask" />
+
+	<Target Name="BuildDist" AfterTargets="AfterBuild">
+		<ItemGroup>
+			<!-- Filter ReferenceCopyLocalPaths as it may contain pdbs as well -->
+			<_ReferenceCopyLocalPaths
+			  Include="@(ReferenceCopyLocalPaths)"
+			  Condition="'%(Extension)' == '.dll'" />
+      		<!-- Reference documentation if available -->
+      		<_ReferenceFiles Include="%(Reference.RelativeDir)%(Reference.Filename).xml" />
+		</ItemGroup>
+
+		<!-- Copy all of the referenced assemblies documentation files -->
+		<Copy SourceFiles="@(_ReferenceFiles)" DestinationFolder="$(OutDir)" Condition="Exists('%(RootDir)%(Directory)%(Filename)%(Extension)')" />
+		
+		<PackageTask
+			ReferencePath="@(_ReferenceCopyLocalPaths)"
+			MonoWasmSDKPath="$(PkgWasm_Sdk_Mono)"
+			IntermediateOutputPath="$(ProjectDir)$(IntermediateOutputPath)"
+			Assembly="$(IntermediateOutputPath)$(TargetFileName)"
+			OutputDirectory="$(OutDir)"
+			RuntimeConfiguration="$(MonoWasmRuntimeConfiguration)"
+			IncludeAssemblies="@(IncludeAssemblies)">
+			<Output TaskParameter="PackagedFiles" ItemName="_PackagedFiles" />
+			<Output TaskParameter="IntermediatePackageDirectory" PropertyName="_IntermediatePackageDirectory" />
+		</PackageTask>
+    
+    <ItemGroup>
+      <_JsBuildInPlaceFiles Include="$(WasmPackageOutputPath)/*.*"/>
+      <_JsBuildSourceFiles Include="$(MSBuildThisFileDirectory)../jsBuild/*.*" Exclude="@(_JsBuildInPlaceFiles -> '$(MSBuildThisFileDirectory)../jsBuild\%(FileName)%(Extension)')"/>
+    </ItemGroup>
+    
+    <Copy
+      SourceFiles="@(_JsBuildSourceFiles)"
+      DestinationFiles="@(_JsBuildSourceFiles->'$(WasmPackageOutputPath)\%(RecursiveDir)%(Filename)%(Extension)')"
+    />
+    
+    <ItemGroup>
+      <_FrameworkFiles Include="$(_IntermediatePackageDirectory)\**\*.*" />
+    </ItemGroup>
+
+    <Move SourceFiles="@(_FrameworkFiles)" DestinationFolder="$(WasmPackageOutputPath)\static\_framework" OverwriteReadOnlyFiles="true" />
+
+    <!--<TrimTask
+			ReferencePath="@(_ReferenceCopyLocalPaths)"
+			MonoWasmSDKPath="$(PkgWasm_Sdk_Mono)"
+			Assembly="$(IntermediateOutputPath)$(TargetFileName)"
+			IntermediateOutputPath="$(_IntermediatePackageDirectory)">
+			<Output TaskParameter="TrimmedFiles" ItemName="_TrimmedFiles" />
+			<Output TaskParameter="IntermediateTrimDirectory" PropertyName="_IntermediateTrimDirectory" />
+		</TrimTask>
+
+		<GetFileHash Files="@(_TrimmedFiles)" Algorithm="SHA256" HashEncoding="base64">
+			<Output TaskParameter="Items" ItemName="_TrimmedFilesWithHash" />
+		</GetFileHash>
+
+		<WasmPackageJsonTask
+			AssemblyPath="@(IntermediateAssembly)"
+			Resources="@(_TrimmedFilesWithHash)"
+			OutputPath="$(_IntermediateTrimDirectory)"  />-->
+	</Target>
+
+  <PropertyGroup>
+    <_WasmPackageDirectory>$(WasmPackageOutputPath)/static/_framework</_WasmPackageDirectory>
+  </PropertyGroup>
+
+  <Target Name="_CleanDist" BeforeTargets="Clean">
+    <PropertyGroup>
+      <!-- Defined here because OutputPath is defined late -->
+      <WasmShellDistPath Condition="'$(WasmShellDistPath)'==''">$(OutputPath)/dist</WasmShellDistPath>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <_DistFilesToDelete Include="$(OutputPath)dist\**" />
+      <_FrameworkFileToDelete Include="$(_WasmPackageDirectory)\**" />
+      <_DistDirToDelete Include="$([System.IO.Directory]::GetDirectories(&quot;$(WasmShellDistPath)&quot;))" Condition="exists('$(WasmShellDistPath)')" />
+    </ItemGroup>
+
+    <Delete Files="@(_DistFilesToDelete)" />
+    <Delete Files="@(_FrameworkFileToDelete)" />
+    <RemoveDir Directories="@(_DistDirToDelete)" />
+  </Target>
+
+  <Target Name="PublishDocumentation" AfterTargets="BuildDist">
+    <PropertyGroup>
+      <DefaultAssemblyDocumentationWhitelist Condition="'$(DefaultAssemblyDocumentationWhitelist)'==''">
+        System.*.xml;mscorlib.xml
+      </DefaultAssemblyDocumentationWhitelist>
+      <AssemblyDocumentationWhitelist Condition="'$(AssemblyDocumentationWhitelist)'==''">
+        $(AssemblyName).xml
+      </AssemblyDocumentationWhitelist>
+    </PropertyGroup>
+
+    <PublishDocumentationTask
+      SourceDirectory="$(OutputPath)"
+      OutputDirectory="$(_WasmPackageDirectory)"
+      DefaultAssemblyPatterns="$(DefaultAssemblyDocumentationWhitelist.Trim())"
+      AssemblyPatterns="$(AssemblyDocumentationWhitelist.Trim())"
+    />
+  </Target>
+
+  <Target Name="GeneratePackage" AfterTargets="PublishDocumentation">
+    <ItemGroup>
+      <_WasmPackageFiles Include="$(WasmPackageOutputPath)/static/_framework/*.*"/>
+    </ItemGroup>
+    
+    <!--<Copy
+      SourceFiles="@(_DefaultDocuments)"
+      DestinationFiles="@(_DefaultDocuments->'$(OutputPath)\js\static\_framework\%(RecursiveDir)%(Filename)%(Extension)')"
+    />-->
+
+		<GetFileHash Files="@(_WasmPackageFiles)" Algorithm="SHA256" HashEncoding="base64">
+			<Output TaskParameter="Items" ItemName="_PackagedFilesWithHash" />
+		</GetFileHash>
+
+    <WasmPackageJsonTask
+      Name="$(PackageId)"
+      PackageName="$(PackageName)"
+			AssemblyPath="$(_WasmPackageDirectory)/$(AssemblyName).dll"
+			Resources="@(_PackagedFilesWithHash)"
+			OutputPath="$(_WasmPackageDirectory)"  />
+
+    <NpmPackageJsonTask
+      Name="$(PackageId)"
+      PackageName="$(PackageName)"
+      Version="$(Version)"
+      Authors="$(Authors)"
+      Description="$(Description)"
+      License="$(License)"
+			OutputPath="$(WasmPackageOutputPath)"  />
+    
+  </Target>
+
+  <Target Name="EnsureNodeEnv" AfterTargets="GeneratePackage" Condition=" '$(Configuration)' == 'Debug' And !Exists('$(WasmPackageOutputPath)\node_modules') ">
+    <Exec Command="node --version" ContinueOnError="true">
+      <Output TaskParameter="ExitCode" PropertyName="NodeErrorCode" />
+    </Exec>
+    <Error Condition="'$(NodeErrorCode)' != '0'" Text="Node.js is required to build and run this project. To continue, please install Node.js from https://nodejs.org/, and then restart your command prompt or IDE." />  
+  </Target>
+	
+  <Target Name="BuildAndLinkClientPackage" AfterTargets="EnsureNodeEnv" Condition="'$(SkipClientPackage)' == ''">
+    <ItemGroup>
+      <_TsBuildSourceFiles Include="$(ProjectDir)$(IntermediateOutputPath)ts/*.*"/>
+    </ItemGroup>
+    <Move SourceFiles="@(_TsBuildSourceFiles)" DestinationFolder="$(WasmPackageOutputPath)\src"/>
+    
+    <PropertyGroup>
+      <NodeCommandExecutor>yarn</NodeCommandExecutor>
+    </PropertyGroup>
+    <Exec WorkingDirectory="$(WasmPackageOutputPath)" Command="yarn version" ContinueOnError="true">
+      <Output TaskParameter="ExitCode" PropertyName="YarnErrorCode" />
+    </Exec>
+    <PropertyGroup>
+      <NodeCommandExecutor Condition="'$(YarnErrorCode)' != '0'">npm</NodeCommandExecutor>
+    </PropertyGroup>
+
+    <Message Importance="high" Text="Restoring dependencies using '$(NodeCommandExecutor)'. This may take several minutes..." />
+    <Exec WorkingDirectory="$(WasmPackageOutputPath)" Command="$(NodeCommandExecutor) install" />
+    <Message Importance="high" Text="Building client package." />
+    <!--<Exec Condition=" '$(Configuration)' == 'Debug'" WorkingDirectory="$(OutputPath)\js" Command="$(NodeCommandExecutor) unlink" IgnoreExitCode="true" />-->
+    <!--<Exec WorkingDirectory="$(OutputPath)\js" Command="$(NodeCommandExecutor) run clean" />-->
+    <Exec Condition=" '$(Configuration)' == 'Release'" WorkingDirectory="$(WasmPackageOutputPath)" Command="$(NodeCommandExecutor) run build" />
+    <Exec Condition=" '$(Configuration)' == 'Debug'" WorkingDirectory="$(WasmPackageOutputPath)" Command="$(NodeCommandExecutor) run build:debug" />
+    <Message Condition=" '$(Configuration)' == 'Debug'" Importance="high" Text="Performing '$(NodeCommandExecutor)' link to allow local development." />
+    <Exec Condition=" '$(Configuration)' == 'Debug'" WorkingDirectory="$(WasmPackageOutputPath)" Command="$(NodeCommandExecutor) link" IgnoreExitCode="true" />
+  </Target>
+
+	<Import Project="$(MSBuildThisFileDirectory)Wasm.Sdk.Publish.targets"/>
+</Project>
